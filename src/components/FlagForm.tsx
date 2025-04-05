@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ const violationOptions = [
 const FlagForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedViolations, setSelectedViolations] = useState<string[]>([]);
+  const [showOtherInput, setShowOtherInput] = useState(false);
   const [formData, setFormData] = useState({
     company: '',
     role: '',
@@ -28,8 +29,14 @@ const FlagForm = () => {
     narrative: '',
     names: '',
     quotes: '',
-    consent: ''
+    consent: '',
+    otherViolation: '',
+    proofUrl: ''
   });
+
+  useEffect(() => {
+    setShowOtherInput(selectedViolations.includes('other'));
+  }, [selectedViolations]);
 
   const handleViolationToggle = (violation: string) => {
     setSelectedViolations(prev => 
@@ -51,9 +58,12 @@ const FlagForm = () => {
   const isStepValid = (step: number): boolean => {
     switch (step) {
       case 1:
+        if (selectedViolations.includes('other') && !formData.otherViolation) {
+          return false;
+        }
         return !!(formData.company && formData.role && formData.dateRange && selectedViolations.length > 0);
       case 2:
-        return !!formData.narrative;
+        return !!(formData.narrative && formData.proofUrl);
       case 3:
         return !!formData.consent;
       default:
@@ -87,7 +97,9 @@ const FlagForm = () => {
         narrative: '',
         names: '',
         quotes: '',
-        consent: ''
+        consent: '',
+        otherViolation: '',
+        proofUrl: ''
       });
     } else {
       toast.error("Please verify all required information before submitting.");
@@ -190,6 +202,24 @@ const FlagForm = () => {
                 </div>
               </div>
 
+              {showOtherInput && (
+                <div>
+                  <Label htmlFor="otherViolation" className="text-white">Specify Other Violation*</Label>
+                  <Input 
+                    id="otherViolation" 
+                    value={formData.otherViolation}
+                    onChange={handleInputChange}
+                    className="bg-dark-100 border-gray-700 text-white mt-1" 
+                    placeholder="Brief one-sentence description"
+                    maxLength={100}
+                    required 
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    {formData.otherViolation.length}/100 characters
+                  </div>
+                </div>
+              )}
+
               <Button 
                 type="button" 
                 onClick={handleNext}
@@ -205,6 +235,7 @@ const FlagForm = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="narrative" className="text-white">What Happened?*</Label>
+                <p className="text-xs text-gray-400 mb-2">Please be concise and focus on facts.</p>
                 <Textarea 
                   id="narrative" 
                   value={formData.narrative}
@@ -221,19 +252,36 @@ const FlagForm = () => {
               </div>
 
               <div>
-                <Label htmlFor="proof" className="text-white">Upload Proof*</Label>
+                <Label htmlFor="proofUrl" className="text-white">Evidence URL*</Label>
+                <p className="text-xs text-gray-400 mb-2">
+                  Link to a drive folder or document with your evidence
+                </p>
+                <Input 
+                  id="proofUrl" 
+                  type="url" 
+                  value={formData.proofUrl}
+                  onChange={handleInputChange}
+                  placeholder="https://drive.google.com/..." 
+                  className="bg-dark-100 border-gray-700 text-white mt-1" 
+                  required 
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="proof" className="text-white">Or Upload Proof Directly</Label>
                 <p className="text-xs text-gray-400 mb-2">
                   (Email screenshots, invites, code samples, etc.)
                 </p>
-                <Input 
-                  id="proof" 
-                  type="file" 
-                  className="bg-dark-100 border-gray-700 text-white mt-1 file:mr-4 file:py-2 file:px-4
-                           file:rounded-md file:border-0 file:bg-redflag file:text-white
-                           hover:file:bg-redflag-dark" 
-                  required 
-                  multiple 
-                />
+                <div className="relative">
+                  <Input 
+                    id="proof" 
+                    type="file" 
+                    className="bg-dark-100 border-gray-700 text-white mt-1 file:mr-4 file:py-2 file:px-4
+                              file:rounded-md file:border-0 file:bg-redflag file:text-white
+                              hover:file:bg-redflag-dark file:z-10 file:relative" 
+                    multiple 
+                  />
+                </div>
               </div>
 
               <div className="flex space-x-3">
@@ -287,7 +335,7 @@ const FlagForm = () => {
               </div>
 
               <div>
-                <Label htmlFor="consent" className="text-white">Consent*</Label>
+                <Label htmlFor="consent" className="text-white">Consent and Verification*</Label>
                 <Select 
                   value={formData.consent} 
                   onValueChange={handleConsent}
@@ -304,6 +352,15 @@ const FlagForm = () => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="p-4 bg-dark-400 border border-redflag-dark/30 rounded-md text-white">
+                <p className="text-sm font-bold mb-2">Zero-Tolerance Policy on False Information</p>
+                <p className="text-xs">
+                  Redflagged has a strict zero-tolerance policy on fake or malicious submissions. 
+                  False reports will result in permanent ban from the platform and may lead to legal consequences. 
+                  All submissions undergo thorough verification before publication.
+                </p>
               </div>
 
               <div className="flex space-x-3">

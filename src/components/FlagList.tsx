@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ShieldAlert } from "lucide-react";
 
 interface Flag {
   id: number;
@@ -66,10 +68,14 @@ const getTagClassName = (tag: string): string => {
 const FlagList = () => {
   return (
     <div className="container-card mb-10">
-      <CardHeader className="px-0 pt-0">
-        <CardTitle className="text-2xl mb-4">Recent Redflags</CardTitle>
-      </CardHeader>
       <CardContent className="p-0">
+        <Alert className="mb-4 bg-dark-300 border border-redflag/20 text-white">
+          <ShieldAlert className="h-4 w-4 text-redflag" />
+          <AlertDescription>
+            All reports are verified before publication. Redflagged has a zero-tolerance policy on false or malicious submissions.
+          </AlertDescription>
+        </Alert>
+        
         <div className="bg-dark-400 rounded-lg overflow-hidden">
           {sampleFlags.map((flag) => (
             <div key={flag.id} className="border-b border-gray-800 p-4 hover:bg-dark-300 transition-colors">
