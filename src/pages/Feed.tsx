@@ -5,13 +5,15 @@ import FlagList from '@/components/FlagList';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Feed = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [timeSort, setTimeSort] = useState('all');
 
   return (
     <div className="min-h-screen flex flex-col bg-dark-500">
@@ -56,10 +58,46 @@ const Feed = () => {
                 <SelectItem value="disrespectful">Disrespectful Behavior</SelectItem>
               </SelectContent>
             </Select>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-48 bg-dark-100 border-gray-700 text-white flex justify-between items-center">
+                  <span className="flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {timeSort === 'now' && 'Now'}
+                    {timeSort === 'today' && 'Today'}
+                    {timeSort === 'week' && 'This Week'}
+                    {timeSort === 'month' && 'This Month'}
+                    {timeSort === 'year' && 'This Year'}
+                    {timeSort === 'all' && 'All Time'}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48 bg-dark-100 border-gray-700 text-white">
+                <DropdownMenuItem onClick={() => setTimeSort('now')} className="cursor-pointer hover:bg-dark-300">
+                  Now
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTimeSort('today')} className="cursor-pointer hover:bg-dark-300">
+                  Today
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTimeSort('week')} className="cursor-pointer hover:bg-dark-300">
+                  This Week
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTimeSort('month')} className="cursor-pointer hover:bg-dark-300">
+                  This Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTimeSort('year')} className="cursor-pointer hover:bg-dark-300">
+                  This Year
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTimeSort('all')} className="cursor-pointer hover:bg-dark-300">
+                  All Time
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         
-        <FlagList searchQuery={searchQuery} filterType={filterType} />
+        <FlagList searchQuery={searchQuery} filterType={filterType} timeSort={timeSort} />
       </main>
       
       <Footer />

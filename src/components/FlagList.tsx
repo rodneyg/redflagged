@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ShieldAlert, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
 interface Flag {
   id: number;
@@ -11,7 +13,9 @@ interface Flag {
   description: string;
   tags: string[];
   date: string;
+  timestamp: Date; // Added for sorting
   views: number;
+  website?: string;
 }
 
 const sampleFlags: Flag[] = [
@@ -22,7 +26,9 @@ const sampleFlags: Flag[] = [
     description: "Ghosted after submitting final round code. Interviewer said no one else solved their challenge.",
     tags: ["Ghosting", "Unpaid Challenge"],
     date: "March 2024",
-    views: 1284
+    timestamp: new Date(2024, 2, 15), // March 15, 2024
+    views: 1284,
+    website: "https://felt.com"
   },
   {
     id: 2,
@@ -31,7 +37,9 @@ const sampleFlags: Flag[] = [
     description: "Received unpaid take-home project. Spent 12 hours designing and coding a prototype. Never received feedback despite follow-up emails.",
     tags: ["Unpaid Challenge", "Ghosting"],
     date: "February 2024",
-    views: 723
+    timestamp: new Date(2024, 1, 10), // February 10, 2024
+    views: 723,
+    website: "https://acme.com"
   },
   {
     id: 3,
@@ -40,7 +48,9 @@ const sampleFlags: Flag[] = [
     description: "Role was advertised as remote-friendly. After 4 interviews, was told it's actually required to be in-office 5 days a week in a different state.",
     tags: ["Misleading Role"],
     date: "January 2024",
-    views: 946
+    timestamp: new Date(2024, 0, 5), // January 5, 2024
+    views: 946,
+    website: "https://techforward.io"
   },
   {
     id: 4,
@@ -49,7 +59,9 @@ const sampleFlags: Flag[] = [
     description: "Signed offer letter, gave notice at current job. Offer was rescinded 3 days before start date citing 'changing business needs'.",
     tags: ["Offer Revoked"],
     date: "February 2024",
-    views: 1576
+    timestamp: new Date(2024, 1, 25), // February 25, 2024
+    views: 1576,
+    website: "https://growthcapital.com"
   }
 ];
 
@@ -73,10 +85,12 @@ const getTagClassName = (tag: string): string => {
 interface FlagListProps {
   searchQuery?: string;
   filterType?: string;
+  timeSort?: string;
 }
 
-const FlagList = ({ searchQuery = '', filterType = 'all' }: FlagListProps) => {
-  const filteredFlags = sampleFlags.filter(flag => {
+const FlagList = ({ searchQuery = '', filterType = 'all', timeSort = 'all' }: FlagListProps) => {
+  // Filter by search query and tag
+  let filteredFlags = sampleFlags.filter(flag => {
     // Apply search filter
     const matchesSearch = 
       searchQuery === '' || 
@@ -91,6 +105,34 @@ const FlagList = ({ searchQuery = '', filterType = 'all' }: FlagListProps) => {
     
     return matchesSearch && matchesTag;
   });
+
+  // Apply time filtering
+  const now = new Date();
+  filteredFlags = filteredFlags.filter(flag => {
+    switch(timeSort) {
+      case 'now':
+        // Last hour
+        return (now.getTime() - flag.timestamp.getTime()) < 60 * 60 * 1000;
+      case 'today':
+        // Last 24 hours
+        return (now.getTime() - flag.timestamp.getTime()) < 24 * 60 * 60 * 1000;
+      case 'week':
+        // Last 7 days
+        return (now.getTime() - flag.timestamp.getTime()) < 7 * 24 * 60 * 60 * 1000;
+      case 'month':
+        // Last 30 days
+        return (now.getTime() - flag.timestamp.getTime()) < 30 * 24 * 60 * 60 * 1000;
+      case 'year':
+        // Last 365 days
+        return (now.getTime() - flag.timestamp.getTime()) < 365 * 24 * 60 * 60 * 1000;
+      case 'all':
+      default:
+        return true;
+    }
+  });
+
+  // Sort by most recent first
+  filteredFlags.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
   return (
     <div className="container-card mb-10">
@@ -109,12 +151,18 @@ const FlagList = ({ searchQuery = '', filterType = 'all' }: FlagListProps) => {
         ) : (
           <div className="bg-dark-400 rounded-lg overflow-hidden">
             {filteredFlags.map((flag) => (
-              <div key={flag.id} className="border-b border-gray-800 p-4 hover:bg-dark-300 transition-colors">
+              <Link 
+                to={`/flag/${flag.id}`} 
+                key={flag.id}
+                className="block border-b border-gray-800 p-4 hover:bg-dark-300 transition-colors"
+              >
                 <div className="flex flex-wrap items-start justify-between mb-2">
                   <h3 className="text-lg font-bold text-white">
                     {flag.company} – <span className="text-gray-300">{flag.role}</span>
                   </h3>
-                  <span className="text-xs text-gray-500">{flag.date}</span>
+                  <span className="text-xs text-gray-500">
+                    {formatDistanceToNow(flag.timestamp, { addSuffix: true })}
+                  </span>
                 </div>
                 <p className="text-gray-300 mb-3">{flag.description}</p>
                 <div className="flex justify-between items-center">
@@ -130,7 +178,7 @@ const FlagList = ({ searchQuery = '', filterType = 'all' }: FlagListProps) => {
                     {flag.views.toLocaleString()}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
