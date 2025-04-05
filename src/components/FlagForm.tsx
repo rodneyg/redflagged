@@ -24,6 +24,7 @@ const FlagForm = () => {
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [formData, setFormData] = useState({
     company: '',
+    website: '',
     role: '',
     dateRange: '',
     narrative: '',
@@ -92,6 +93,7 @@ const FlagForm = () => {
       setSelectedViolations([]);
       setFormData({
         company: '',
+        website: '',
         role: '',
         dateRange: '',
         narrative: '',
@@ -152,6 +154,19 @@ const FlagForm = () => {
                   id="company" 
                   value={formData.company}
                   onChange={handleInputChange}
+                  className="bg-dark-100 border-gray-700 text-white mt-1" 
+                  required 
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="website" className="text-white">Company Website*</Label>
+                <Input 
+                  id="website" 
+                  type="url"
+                  value={formData.website}
+                  onChange={handleInputChange}
+                  placeholder="https://www.example.com" 
                   className="bg-dark-100 border-gray-700 text-white mt-1" 
                   required 
                 />
@@ -254,7 +269,7 @@ const FlagForm = () => {
               <div>
                 <Label htmlFor="proofUrl" className="text-white">Evidence URL*</Label>
                 <p className="text-xs text-gray-400 mb-2">
-                  Link to a drive folder or document with your evidence
+                  Link to a drive folder or document with your evidence (required)
                 </p>
                 <Input 
                   id="proofUrl" 
@@ -272,7 +287,7 @@ const FlagForm = () => {
                 <p className="text-xs text-gray-400 mb-2">
                   (Email screenshots, invites, code samples, etc.)
                 </p>
-                <div className="relative">
+                <div className="relative overflow-hidden">
                   <Input 
                     id="proof" 
                     type="file" 
@@ -289,7 +304,7 @@ const FlagForm = () => {
                   type="button" 
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-gray-700 text-white hover:bg-dark-100"
+                  className="flex-1 border-gray-700 text-white bg-dark-300 hover:bg-dark-100"
                 >
                   Back
                 </Button>
@@ -368,7 +383,7 @@ const FlagForm = () => {
                   type="button" 
                   onClick={handleBack}
                   variant="outline"
-                  className="flex-1 border-gray-700 text-white hover:bg-dark-100"
+                  className="flex-1 border-gray-700 text-white bg-dark-300 hover:bg-dark-100"
                 >
                   Back
                 </Button>

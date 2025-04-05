@@ -16,7 +16,7 @@ const Submit = () => {
         <div className="max-w-3xl mx-auto mb-6">
           <Button 
             variant="outline" 
-            className="border-gray-700 text-white hover:bg-dark-100 mb-4" 
+            className="border-gray-700 text-white bg-dark-300 hover:bg-dark-100 mb-4" 
             asChild
           >
             <Link to="/">
