@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { formatDistanceToNow } from 'date-fns';
+import ReportDialog from '@/components/ReportDialog';
+import ResponseDialog from '@/components/ResponseDialog';
 
 // This would typically come from an API
 const sampleFlags = [
@@ -178,7 +180,7 @@ const FlagDetails = () => {
                 <p className="text-gray-300 leading-relaxed">{flag.description}</p>
               </div>
               
-              <div className="bg-dark-300 p-4 rounded-md border border-redflag/20">
+              <div className="bg-dark-300 p-4 rounded-md border border-redflag/20 mb-6">
                 <div className="flex items-start">
                   <AlertTriangle className="h-5 w-5 text-redflag mr-3 mt-0.5" />
                   <div>
@@ -191,6 +193,12 @@ const FlagDetails = () => {
                   </div>
                 </div>
               </div>
+              
+              <div className="flex flex-wrap gap-3">
+                <ReportDialog flagId={flag.id} companyName={flag.company} />
+                <ResponseDialog flagId={flag.id} companyName={flag.company} />
+              </div>
+              
             </CardContent>
           </Card>
         </div>
