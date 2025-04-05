@@ -1,4 +1,6 @@
-# Welcome to your Lovable project
+# REDFLAGGED
+
+REDFLAGGED is a platform for reporting and viewing unprofessional conduct in hiring processes, such as ghosting, exploitation, and deception. It aims to provide a public, verified, and honest ledger of such incidents to help others avoid similar situations.
 
 ## Project info
 
